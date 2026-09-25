@@ -1,0 +1,488 @@
+<!-- Copia este archivo como index.html para publicarlo en GitHub Pages, Netlify o abrirlo en tu navegador -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>QuizMaster - Trivia de Química Orgánica & Inorgánica</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'sans-serif'], mono: ['JetBrains Mono', 'monospace'] },
+          colors: {
+            obsidian: { bg: '#090D16', surface: '#111827', card: '#161F33', border: '#263554' },
+            neon: { cyan: '#00E5FF' },
+            chem: { emerald: '#10B981', violet: '#A855F7', amber: '#F59E0B', crimson: '#EF4444' }
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    body { background-color: #090D16; color: #F8FAFC; -webkit-tap-highlight-color: transparent; }
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+  </style>
+</head>
+<body class="min-h-screen flex justify-center bg-obsidian-bg antialiased">
+  <div id="app" class="w-full max-w-md min-h-screen bg-obsidian-bg flex flex-col justify-between border-x border-obsidian-border/50 relative shadow-2xl">
+    <!-- Header -->
+    <header class="p-4 border-b border-obsidian-border/60 bg-obsidian-surface/90 backdrop-blur sticky top-0 z-40 flex items-center justify-between">
+      <div class="flex items-center gap-2.5">
+        <div class="w-9 h-9 rounded-xl bg-neon-cyan/15 border border-neon-cyan/50 flex items-center justify-center text-neon-cyan font-mono font-black text-sm">QM</div>
+        <div>
+          <h1 class="font-extrabold text-lg leading-tight text-white flex items-center gap-1.5">QuizMaster <span class="text-[10px] px-1.5 py-0.5 rounded bg-chem-violet/20 border border-chem-violet/40 text-chem-violet font-semibold">WEB</span></h1>
+          <p class="text-xs text-slate-400">Química Orgánica & Inorgánica</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <div class="flex items-center gap-1 px-2.5 py-1 rounded-full bg-chem-amber/15 border border-chem-amber/40 text-chem-amber text-xs font-bold"><span>🔥</span><span id="streak-counter">3 d</span></div>
+        <div class="flex items-center gap-1 px-2.5 py-1 rounded-full bg-chem-violet/15 border border-chem-violet/40 text-chem-violet text-xs font-bold"><span>⚡</span><span id="xp-counter">450 XP</span></div>
+      </div>
+    </header>
+
+    <!-- Main -->
+    <main id="main-content" class="flex-1 p-4 pb-24 overflow-y-auto hide-scrollbar"></main>
+
+    <!-- Navigation -->
+    <nav class="fixed bottom-0 w-full max-w-md bg-obsidian-surface/95 border-t border-obsidian-border/80 backdrop-blur py-2 px-3 z-50 flex items-center justify-around">
+      <button onclick="navigate('home')" id="nav-home" class="nav-btn flex flex-col items-center gap-1 text-neon-cyan text-xs font-semibold py-1 px-2">
+        <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M19 13.5v5.5a2 2 0 01-2 2h-10a2 2 0 01-2-2v-5.5a4.5 4.5 0 012.3-3.92L11 3.86a2 2 0 012 0l3.7 2.22A4.5 4.5 0 0119 13.5z"/></svg>
+        <span>Jugar</span>
+      </button>
+      <button onclick="navigate('duel')" id="nav-duel" class="nav-btn flex flex-col items-center gap-1 text-slate-400 text-xs font-semibold py-1 px-2">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+        <span>Duelo 1v1</span>
+      </button>
+      <button onclick="navigate('create')" id="nav-create" class="nav-btn flex flex-col items-center gap-1 text-slate-400 text-xs font-semibold py-1 px-2">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v6m3-3H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <span>Crear</span>
+      </button>
+      <button onclick="navigate('stats')" id="nav-stats" class="nav-btn flex flex-col items-center gap-1 text-slate-400 text-xs font-semibold py-1 px-2">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+        <span>Progreso</span>
+      </button>
+      <button onclick="navigate('ranking')" id="nav-ranking" class="nav-btn flex flex-col items-center gap-1 text-slate-400 text-xs font-semibold py-1 px-2">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
+        <span>Ranking</span>
+      </button>
+    </nav>
+  </div>
+
+  <script>
+    const state = {
+      xp: parseInt(localStorage.getItem('qm_xp') || '450'),
+      streak: parseInt(localStorage.getItem('qm_streak') || '3'),
+      categoryFilter: 'ALL',
+      currentScreen: 'home',
+      activeQuiz: null,
+      quizTimer: 25,
+      timerInterval: null,
+      masteredCompounds: JSON.parse(localStorage.getItem('qm_mastered') || '["CH₄", "H₂SO₄"]'),
+      duelState: { active: false, timeLeft: 12, userScore: 0, oppScore: 0, round: 0, fiftyUsed: false, timerUsed: false, spectroUsed: false, questions: [] }
+    };
+
+    const chemistryDB = [
+      {
+        id: "org_beg_1", name: "Metano", formula: "CH₄", type: "ORGANIC", level: 1, xp: 25,
+        question: "¿Cuál es la geometría molecular y la hibridación del carbono en el metano (CH₄)?",
+        options: ["Tetraédrica con hibridación sp³", "Trigonal plana con hibridación sp²", "Lineal con hibridación sp", "Piramidal trigonal sp³d"],
+        correct: 0,
+        explanation: "Posee 4 enlaces C-H simples equivalentes. La repulsión electrónica minimizada genera ángulos de 109.5°, correspondientes a una hibridación orbital sp³.",
+        equation: "CH₄ + 2O₂ → CO₂ + 2H₂O + 891 kJ/mol",
+        fact: "Componente principal (>85%) del gas natural."
+      },
+      {
+        id: "inorg_beg_1", name: "Ácido Sulfúrico", formula: "H₂SO₄", type: "INORGANIC", level: 1, xp: 25,
+        question: "¿Qué estado de oxidación posee el azufre en el ácido sulfúrico (H₂SO₄)?",
+        options: ["+4", "+6", "+2", "-2"],
+        correct: 1,
+        explanation: "Con H (+1 × 2 = +2) y O (-2 × 4 = -8), para equilibrar la carga neutra el azufre actúa con +6.",
+        equation: "SO₃ + H₂O → H₂SO₄",
+        fact: "Considerado el reactivo rey de la industria química pesada."
+      },
+      {
+        id: "org_int_1", name: "Benceno", formula: "C₆H₆", type: "ORGANIC", level: 2, xp: 50,
+        question: "¿Por qué el benceno (C₆H₆) no experimenta fácilmente reacciones de adición?",
+        options: ["Por su energía de resonancia aromática (Regla de Hückel 4n+2)", "Porque carece de enlaces pi", "Porque todos sus carbonos son sp³", "Por tensión de anillo angular"],
+        correct: 0,
+        explanation: "Sus 6 electrones pi deslocalizados forman un anillo aromático estable que prefiere la sustitución electrofílica antes que destruir la conjugación.",
+        equation: "C₆H₆ + Br₂ (FeBr₃) → C₆H₅Br + HBr",
+        fact: "Kekulé soñó con una serpiente mordiéndose la cola para describir su forma cíclica."
+      },
+      {
+        id: "inorg_int_1", name: "Permanganato de Potasio", formula: "KMnO₄", type: "INORGANIC", level: 2, xp: 50,
+        question: "En medio ácido fuerte, ¿a qué especie se reduce el ion permanganato (MnO₄⁻)?",
+        options: ["Mn²⁺ (incoloro o rosa muy pálido)", "MnO₂ marrón", "MnO₄²⁻ verde", "Mn(OH)₃"],
+        correct: 0,
+        explanation: "En volumetría ácida: MnO₄⁻ + 8H⁺ + 5e⁻ → Mn²⁺ + 4H₂O. Pasa de +7 a +2 actuando como autoindicador.",
+        equation: "MnO₄⁻ + 8H⁺ + 5e⁻ → Mn²⁺ + 4H₂O (E° = +1.51 V)",
+        fact: "Su intenso color violeta proviene de transferencia de carga ligando a metal."
+      },
+      {
+        id: "org_adv_1", name: "Acetileno", formula: "C₂H₂", type: "ORGANIC", level: 3, xp: 100,
+        question: "¿Por qué los hidrógenos del etino (H-C≡C-H) tienen mayor acidez (pKa ~25)?",
+        options: ["Por el 50% de carácter 's' en el carbono híbrido sp que estabiliza la base conjugada", "Por enlaces conjugados dobles", "Porque el triple enlace disminuye la electronegatividad", "Porque forma carbocationes estables"],
+        correct: 0,
+        explanation: "A mayor carácter s, los electrones se sitúan más cerca del núcleo atómico, reteniendo la carga negativa del carbanión acetiluro con mayor fuerza.",
+        equation: "H-C≡C-H + NaNH₂ → H-C≡C⁻ Na⁺ + NH₃",
+        fact: "Alcanza temperaturas superiores a 3,300 °C en sopletes oxiacetilénicos."
+      },
+      {
+        id: "inorg_exp_1", name: "Complejo de Vaska", formula: "IrCl(CO)[P(C₆H₅)₃]₂", type: "INORGANIC", level: 4, xp: 200,
+        question: "¿Qué tipo de reacción fundamental experimenta al fijar O₂ o H₂?",
+        options: ["Adición oxidativa (aumenta 2 unidades el estado de oxidación y la coordinación)", "Eliminación reductora", "Inserción migratoria 1,1", "Sustitución disociativa Sn1"],
+        correct: 0,
+        explanation: "El complejo plano cuadrado de 16e⁻ con Iridio(I) d⁸ pasa a ser octaédrico de 18e⁻ con Iridio(III) d⁶.",
+        equation: "trans-[IrCl(CO)(PPh₃)₂] + H₂ ⇌ cis-[Ir(H)₂Cl(CO)(PPh₃)₂]",
+        fact: "Prototipo organometálico sintético descubierto en 1961."
+      }
+    ];
+
+    function navigate(screen) {
+      state.currentScreen = screen;
+      clearInterval(state.timerInterval);
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('text-neon-cyan');
+        btn.classList.add('text-slate-400');
+      });
+      const active = document.getElementById(`nav-${screen}`);
+      if (active) {
+        active.classList.remove('text-slate-400');
+        active.classList.add('text-neon-cyan');
+      }
+      renderScreen();
+    }
+
+    function renderScreen() {
+      const main = document.getElementById('main-content');
+      document.getElementById('xp-counter').textContent = `${state.xp} XP`;
+      document.getElementById('streak-counter').textContent = `${state.streak} d`;
+
+      if (state.currentScreen === 'home') {
+        main.innerHTML = `
+          <div class="space-y-4">
+            <div onclick="startDuel()" class="p-4 rounded-2xl bg-gradient-to-r from-obsidian-card to-chem-violet/20 border border-neon-cyan/40 cursor-pointer hover:border-neon-cyan transition-all">
+              <div class="flex items-center justify-between">
+                <div>
+                  <span class="text-[10px] uppercase font-black px-2 py-0.5 rounded bg-neon-cyan text-obsidian-bg">En Vivo</span>
+                  <h2 class="font-extrabold text-lg text-white mt-1">Duelo Rápido 1v1</h2>
+                  <p class="text-xs text-slate-300">Rondas cronometradas de 12s con comodines 50/50 y espectrometría.</p>
+                  <span class="text-xs font-bold text-neon-cyan block mt-2">¡Batallar Ahora! →</span>
+                </div>
+                <div class="text-3xl">⚔️</div>
+              </div>
+            </div>
+
+            <div>
+              <label class="text-xs font-bold text-slate-400 block mb-2">Filtrar Compuestos:</label>
+              <div class="grid grid-cols-3 gap-2">
+                <button onclick="setFilter('ALL')" class="py-2 text-xs font-bold rounded-xl border ${state.categoryFilter === 'ALL' ? 'bg-chem-violet/20 border-chem-violet text-white' : 'bg-obsidian-card border-obsidian-border text-slate-400'}">🧪 Todos</button>
+                <button onclick="setFilter('ORGANIC')" class="py-2 text-xs font-bold rounded-xl border ${state.categoryFilter === 'ORGANIC' ? 'bg-chem-emerald/20 border-chem-emerald text-white' : 'bg-obsidian-card border-obsidian-border text-slate-400'}">🌿 Orgánicos</button>
+                <button onclick="setFilter('INORGANIC')" class="py-2 text-xs font-bold rounded-xl border ${state.categoryFilter === 'INORGANIC' ? 'bg-neon-cyan/20 border-neon-cyan text-white' : 'bg-obsidian-card border-obsidian-border text-slate-400'}">💎 Inorgánicos</button>
+              </div>
+            </div>
+
+            <div class="space-y-2.5 pt-1">
+              <h3 class="font-bold text-xs text-slate-300">Niveles Progresivos</h3>
+              <div onclick="startQuiz(1)" class="p-3.5 rounded-xl bg-obsidian-card border border-chem-emerald/40 hover:border-chem-emerald cursor-pointer flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-full bg-chem-emerald/20 border border-chem-emerald text-chem-emerald font-black flex items-center justify-center">1</div>
+                  <div><h4 class="font-bold text-sm text-white">Principiante ★☆☆☆</h4><p class="text-xs text-slate-400">CH₄, H₂SO₄, nomenclatura IUPAC</p></div>
+                </div>
+                <span class="text-chem-emerald">▶</span>
+              </div>
+              <div onclick="startQuiz(2)" class="p-3.5 rounded-xl bg-obsidian-card border border-neon-cyan/40 hover:border-neon-cyan cursor-pointer flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-full bg-neon-cyan/20 border border-neon-cyan text-neon-cyan font-black flex items-center justify-center">2</div>
+                  <div><h4 class="font-bold text-sm text-white">Intermedio ★★☆☆</h4><p class="text-xs text-slate-400">Benceno, cetonas, redox</p></div>
+                </div>
+                <span class="text-neon-cyan">▶</span>
+              </div>
+              <div onclick="startQuiz(3)" class="p-3.5 rounded-xl bg-obsidian-card border border-chem-amber/40 hover:border-chem-amber cursor-pointer flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-full bg-chem-amber/20 border border-chem-amber text-chem-amber font-black flex items-center justify-center">3</div>
+                  <div><h4 class="font-bold text-sm text-white">Avanzado ★★★☆</h4><p class="text-xs text-slate-400">Hibridación orbital sp/sp², pKa</p></div>
+                </div>
+                <span class="text-chem-amber">▶</span>
+              </div>
+              <div onclick="startQuiz(4)" class="p-3.5 rounded-xl bg-obsidian-card border border-chem-crimson/40 hover:border-chem-crimson cursor-pointer flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="w-10 h-10 rounded-full bg-chem-crimson/20 border border-chem-crimson text-chem-crimson font-black flex items-center justify-center">4</div>
+                  <div><h4 class="font-bold text-sm text-white">Experto ★★★★</h4><p class="text-xs text-slate-400">Complejo de Vaska, adición oxidativa</p></div>
+                </div>
+                <span class="text-chem-crimson">▶</span>
+              </div>
+            </div>
+          </div>
+        `;
+      } else if (state.currentScreen === 'quiz') {
+        const q = state.activeQuiz.questions[state.activeQuiz.currentIndex];
+        const isAnswered = state.activeQuiz.answered;
+        main.innerHTML = `
+          <div class="space-y-4">
+            <div class="flex items-center justify-between text-xs text-slate-400">
+              <button onclick="navigate('home')" class="font-semibold text-white">← Salir</button>
+              <span class="font-bold">Pregunta ${state.activeQuiz.currentIndex + 1} de ${state.activeQuiz.questions.length}</span>
+              <span class="font-mono font-bold text-neon-cyan px-2 py-0.5 rounded bg-obsidian-surface">${state.quizTimer}s</span>
+            </div>
+            <div class="p-4 rounded-2xl bg-obsidian-card border border-obsidian-border space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="font-mono font-bold text-neon-cyan px-2 py-0.5 rounded bg-neon-cyan/15">${q.formula}</span>
+                <span class="text-xs text-slate-400 font-semibold">${q.name}</span>
+              </div>
+              <p class="font-bold text-white text-base leading-snug">${q.question}</p>
+              ${q.equation ? `<div class="p-2 rounded bg-obsidian-surface text-xs font-mono text-chem-violet">${q.equation}</div>` : ''}
+            </div>
+            <div class="space-y-2">
+              ${q.options.map((opt, idx) => {
+                let cls = "bg-obsidian-card border-obsidian-border text-slate-200";
+                if (isAnswered) {
+                  if (idx === q.correct) cls = "bg-chem-emerald/20 border-chem-emerald text-white";
+                  else if (idx === state.activeQuiz.selectedIdx) cls = "bg-chem-crimson/20 border-chem-crimson text-white";
+                }
+                return `<button onclick="${!isAnswered ? `answerQuiz(${idx})` : ''}" class="w-full text-left p-3 rounded-xl border text-xs font-medium ${cls}">${opt}</button>`;
+              }).join('')}
+            </div>
+            ${isAnswered ? `
+              <div class="p-3 rounded-xl bg-obsidian-card border ${state.activeQuiz.selectedIdx === q.correct ? 'border-chem-emerald' : 'border-chem-crimson'} text-xs space-y-1">
+                <p class="font-bold text-white">${state.activeQuiz.selectedIdx === q.correct ? '✅ ¡Correcto!' : '❌ Incorrecto'}</p>
+                <p class="text-slate-300">${q.explanation}</p>
+                <p class="text-chem-amber pt-1 text-[11px]">💡 ${q.fact}</p>
+              </div>
+              <button onclick="nextQuizQuestion()" class="w-full py-3 rounded-xl bg-neon-cyan text-obsidian-bg font-bold text-sm">Continuar →</button>
+            ` : ''}
+          </div>
+        `;
+      } else if (state.currentScreen === 'duel') {
+        const d = state.duelState;
+        const q = d.questions[d.round];
+        main.innerHTML = `
+          <div class="space-y-4">
+            <div class="p-3 rounded-2xl bg-obsidian-card border border-obsidian-border flex items-center justify-between text-xs">
+              <div class="flex items-center gap-2"><div class="w-8 h-8 rounded-full bg-neon-cyan/20 text-neon-cyan font-bold flex items-center justify-center">Tú</div><span class="font-black text-neon-cyan text-sm">${d.userScore}</span></div>
+              <span class="font-mono font-bold text-chem-amber px-2 py-0.5 rounded bg-obsidian-surface">${d.timeLeft}s</span>
+              <div class="flex items-center gap-2"><span class="font-black text-chem-violet text-sm">${d.oppScore}</span><div class="w-8 h-8 rounded-full bg-chem-violet/20 text-chem-violet font-bold flex items-center justify-center">👩‍🔬</div></div>
+            </div>
+            <div class="grid grid-cols-3 gap-2">
+              <button onclick="usePowerUp('fifty')" ${d.fiftyUsed || d.answered ? 'disabled' : ''} class="p-2 rounded-xl border text-xs font-bold ${d.fiftyUsed ? 'opacity-40' : 'border-neon-cyan/40 text-neon-cyan'}">⚗️ 50/50</button>
+              <button onclick="usePowerUp('time')" ${d.timerUsed || d.answered ? 'disabled' : ''} class="p-2 rounded-xl border text-xs font-bold ${d.timerUsed ? 'opacity-40' : 'border-chem-amber/40 text-chem-amber'}">⏳ +5s</button>
+              <button onclick="usePowerUp('spectro')" ${d.spectroUsed || d.answered ? 'disabled' : ''} class="p-2 rounded-xl border text-xs font-bold ${d.spectroUsed ? 'opacity-40' : 'border-chem-violet/40 text-chem-violet'}">🔬 Pista</button>
+            </div>
+            <div class="p-4 rounded-xl bg-obsidian-card border border-obsidian-border space-y-1">
+              <span class="font-mono text-neon-cyan text-xs font-bold">${q.formula} • ${q.name}</span>
+              <p class="font-bold text-white text-sm">${q.question}</p>
+            </div>
+            <div class="space-y-2">
+              ${q.options.map((opt, idx) => {
+                let cls = "bg-obsidian-card border-obsidian-border text-slate-200";
+                if (d.answered) {
+                  if (idx === q.correct) cls = "bg-chem-emerald/20 border-chem-emerald text-white";
+                  else if (idx === d.userChoice) cls = "bg-chem-crimson/20 border-chem-crimson text-white";
+                }
+                return `<button onclick="${!d.answered ? `submitDuel(${idx})` : ''}" class="w-full text-left p-3 rounded-xl border text-xs font-medium ${cls}">${opt}</button>`;
+              }).join('')}
+            </div>
+            ${d.answered ? `<button onclick="nextDuel()" class="w-full py-3 rounded-xl bg-chem-violet text-white font-bold text-sm">Siguiente Ronda →</button>` : ''}
+          </div>
+        `;
+      } else if (state.currentScreen === 'create') {
+        main.innerHTML = `
+          <div class="space-y-3">
+            <h2 class="font-extrabold text-base text-white">Creador de Cuestionarios Químicos</h2>
+            <form onsubmit="saveCustomQuiz(event)" class="space-y-2.5 text-xs">
+              <input id="cq-name" required placeholder="Nombre del compuesto (Ej: Aspirina)" class="w-full bg-obsidian-card border border-obsidian-border rounded-xl p-3 text-white outline-none">
+              <input id="cq-formula" required placeholder="Fórmula molecular (Ej: C₉H₈O₄)" class="w-full bg-obsidian-card border border-obsidian-border rounded-xl p-3 text-white font-mono outline-none">
+              <input id="cq-q" required placeholder="Enunciado de la pregunta" class="w-full bg-obsidian-card border border-obsidian-border rounded-xl p-3 text-white outline-none">
+              <input id="cq-opt1" required placeholder="Opción A (Respuesta Correcta)" class="w-full bg-obsidian-card border border-chem-emerald/50 rounded-xl p-2.5 text-white outline-none">
+              <input id="cq-opt2" required placeholder="Opción B" class="w-full bg-obsidian-card border border-obsidian-border rounded-xl p-2.5 text-white outline-none">
+              <input id="cq-opt3" required placeholder="Opción C" class="w-full bg-obsidian-card border border-obsidian-border rounded-xl p-2.5 text-white outline-none">
+              <input id="cq-opt4" required placeholder="Opción D" class="w-full bg-obsidian-card border border-obsidian-border rounded-xl p-2.5 text-white outline-none">
+              <textarea id="cq-exp" required placeholder="Explicación científica detallada" rows="2" class="w-full bg-obsidian-card border border-obsidian-border rounded-xl p-3 text-white outline-none"></textarea>
+              <button type="submit" class="w-full py-3 rounded-xl bg-neon-cyan text-obsidian-bg font-bold text-sm">Guardar Cuestionario</button>
+            </form>
+          </div>
+        `;
+      } else if (state.currentScreen === 'stats') {
+        main.innerHTML = `
+          <div class="space-y-3">
+            <div class="p-3.5 rounded-2xl bg-obsidian-card border border-obsidian-border flex items-center justify-between">
+              <div><h3 class="font-extrabold text-white text-sm">Investigador Químico</h3><span class="text-xs text-slate-400">Nivel de Laboratorio 2</span></div>
+              <span class="text-xs font-bold text-chem-violet">${state.xp} XP</span>
+            </div>
+            <div class="grid grid-cols-2 gap-2 text-center">
+              <div class="p-3 rounded-xl bg-obsidian-card border border-chem-emerald/40"><span class="text-xs text-slate-400 block">Precisión</span><span class="text-lg font-black text-chem-emerald">88%</span></div>
+              <div class="p-3 rounded-xl bg-obsidian-card border border-chem-amber/40"><span class="text-xs text-slate-400 block">Racha</span><span class="text-lg font-black text-chem-amber">${state.streak} d</span></div>
+            </div>
+            <div class="p-3.5 rounded-xl bg-obsidian-card border border-obsidian-border space-y-2 text-xs">
+              <h4 class="font-bold text-slate-300">Dominio</h4>
+              <div><div class="flex justify-between mb-1 text-chem-emerald font-semibold"><span>🌿 Química Orgánica</span><span>92%</span></div><div class="w-full h-1.5 bg-obsidian-surface rounded-full"><div class="h-full bg-chem-emerald rounded-full" style="width:92%"></div></div></div>
+              <div><div class="flex justify-between mb-1 text-neon-cyan font-semibold"><span>💎 Química Inorgánica</span><span>84%</span></div><div class="w-full h-1.5 bg-obsidian-surface rounded-full"><div class="h-full bg-neon-cyan rounded-full" style="width:84%"></div></div></div>
+            </div>
+            <div class="p-3 rounded-xl bg-obsidian-card border border-obsidian-border space-y-1">
+              <h4 class="font-bold text-xs text-slate-300">Compuestos Dominados (${state.masteredCompounds.length})</h4>
+              <div class="flex flex-wrap gap-1.5 pt-1">${state.masteredCompounds.map(c => `<span class="text-xs font-mono font-bold px-2 py-0.5 rounded bg-chem-emerald/15 border border-chem-emerald/40 text-chem-emerald">✓ ${c}</span>`).join('')}</div>
+            </div>
+          </div>
+        `;
+      } else if (state.currentScreen === 'ranking') {
+        const users = [
+          { rank: 1, name: "Elena Rostova", school: "Univ. Heidelberg", xp: 4250, win: "94%" },
+          { rank: 2, name: "Kenji Takahashi", school: "Univ. Tokio", xp: 3980, win: "91%" },
+          { rank: 3, name: "Sofia Valenzuela", school: "UNAM Química", xp: 3740, win: "88%" },
+          { rank: 4, name: "Tú (Estudiante)", school: "QuizMaster Web", xp: state.xp, win: "85%", isSelf: true }
+        ];
+        main.innerHTML = `
+          <div class="space-y-3">
+            <h2 class="font-extrabold text-base text-white">Clasificación Mundial</h2>
+            <div class="space-y-2 text-xs">
+              ${users.map(u => `
+                <div class="p-3 rounded-xl border flex items-center justify-between ${u.isSelf ? 'bg-neon-cyan/15 border-neon-cyan' : 'bg-obsidian-card border-obsidian-border'}">
+                  <div class="flex items-center gap-2.5">
+                    <span class="font-black text-sm text-neon-cyan">#${u.rank}</span>
+                    <div><span class="font-bold text-white block">${u.name}</span><span class="text-[11px] text-slate-400">${u.school}</span></div>
+                  </div>
+                  <span class="font-mono font-bold text-neon-cyan">${u.xp} XP</span>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    function setFilter(cat) { state.categoryFilter = cat; renderScreen(); }
+
+    function startQuiz(lvl) {
+      let pool = chemistryDB.filter(q => q.level === lvl);
+      if (state.categoryFilter !== 'ALL') {
+        const filtered = pool.filter(q => q.type === state.categoryFilter);
+        if (filtered.length > 0) pool = filtered;
+      }
+      state.activeQuiz = { questions: pool, currentIndex: 0, selectedIdx: null, answered: false };
+      state.currentScreen = 'quiz';
+      state.quizTimer = 25;
+      clearInterval(state.timerInterval);
+      state.timerInterval = setInterval(() => {
+        state.quizTimer--;
+        renderScreen();
+        if (state.quizTimer <= 0) {
+          clearInterval(state.timerInterval);
+          if (!state.activeQuiz.answered) answerQuiz(-1);
+        }
+      }, 1000);
+      renderScreen();
+    }
+
+    function answerQuiz(idx) {
+      clearInterval(state.timerInterval);
+      state.activeQuiz.selectedIdx = idx;
+      state.activeQuiz.answered = true;
+      const q = state.activeQuiz.questions[state.activeQuiz.currentIndex];
+      if (idx === q.correct) {
+        state.xp += q.xp;
+        localStorage.setItem('qm_xp', state.xp);
+        if (!state.masteredCompounds.includes(q.formula)) {
+          state.masteredCompounds.push(q.formula);
+          localStorage.setItem('qm_mastered', JSON.stringify(state.masteredCompounds));
+        }
+      }
+      renderScreen();
+    }
+
+    function nextQuizQuestion() {
+      if (state.activeQuiz.currentIndex + 1 < state.activeQuiz.questions.length) {
+        state.activeQuiz.currentIndex++;
+        state.activeQuiz.answered = false;
+        state.activeQuiz.selectedIdx = null;
+        startQuiz(state.activeQuiz.questions[0].level);
+      } else {
+        alert("¡Cuestionario completado!");
+        navigate('home');
+      }
+    }
+
+    function startDuel() {
+      state.duelState = {
+        active: true, timeLeft: 12, userScore: 0, oppScore: 0, round: 0,
+        fiftyUsed: false, timerUsed: false, spectroUsed: false,
+        questions: chemistryDB.slice().sort(() => 0.5 - Math.random()).slice(0, 3),
+        userChoice: null, answered: false
+      };
+      state.currentScreen = 'duel';
+      clearInterval(state.timerInterval);
+      state.timerInterval = setInterval(() => {
+        state.duelState.timeLeft--;
+        renderScreen();
+        if (state.duelState.timeLeft <= 0) {
+          clearInterval(state.timerInterval);
+          if (!state.duelState.answered) submitDuel(-1);
+        }
+      }, 1000);
+      renderScreen();
+    }
+
+    function usePowerUp(p) {
+      if (p === 'fifty') { state.duelState.fiftyUsed = true; alert("Comodín 50/50: Se han descartado dos opciones."); }
+      if (p === 'time') { state.duelState.timerUsed = true; state.duelState.timeLeft += 6; }
+      if (p === 'spectro') { state.duelState.spectroUsed = true; alert("Pista: " + state.duelState.questions[state.duelState.round].fact); }
+      renderScreen();
+    }
+
+    function submitDuel(choice) {
+      clearInterval(state.timerInterval);
+      const d = state.duelState;
+      d.answered = true;
+      d.userChoice = choice;
+      if (choice === d.questions[d.round].correct) d.userScore += 100 + (d.timeLeft * 5);
+      if (Math.random() > 0.35) d.oppScore += 110;
+      renderScreen();
+    }
+
+    function nextDuel() {
+      const d = state.duelState;
+      if (d.round + 1 < d.questions.length) {
+        d.round++;
+        d.answered = false;
+        d.userChoice = null;
+        d.timeLeft = 12;
+        clearInterval(state.timerInterval);
+        state.timerInterval = setInterval(() => {
+          d.timeLeft--;
+          renderScreen();
+          if (d.timeLeft <= 0) { clearInterval(state.timerInterval); if (!d.answered) submitDuel(-1); }
+        }, 1000);
+        renderScreen();
+      } else {
+        const won = d.userScore >= d.oppScore;
+        state.xp += won ? 150 : 60;
+        localStorage.setItem('qm_xp', state.xp);
+        alert(won ? "🏆 ¡Victoria en el Duelo! +150 XP" : "¡Fin del duelo! +60 XP");
+        navigate('home');
+      }
+    }
+
+    function saveCustomQuiz(e) {
+      e.preventDefault();
+      const newQ = {
+        name: document.getElementById('cq-name').value,
+        formula: document.getElementById('cq-formula').value,
+        type: "ORGANIC", level: 2, xp: 50,
+        question: document.getElementById('cq-q').value,
+        options: [document.getElementById('cq-opt1').value, document.getElementById('cq-opt2').value, document.getElementById('cq-opt3').value, document.getElementById('cq-opt4').value],
+        correct: 0, explanation: document.getElementById('cq-exp').value, fact: "Pregunta personalizada creada por el usuario."
+      };
+      chemistryDB.push(newQ);
+      state.xp += 50;
+      localStorage.setItem('qm_xp', state.xp);
+      alert("¡Pregunta guardada y +50 XP acreditados!");
+      navigate('home');
+    }
+
+    navigate('home');
+  </script>
+</body>
+</html>

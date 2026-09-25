@@ -1,0 +1,6 @@
+{
+  "name": "QuizMaster",
+  "description": "Juego de trivia de química con compuestos orgánicos e inorgánicos, niveles progresivos, explicaciones detalladas, cuestionarios personalizados, estadísticas y duelos rápidos.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
